@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useAppRouter } from "./router";
-import type { RegisUser } from "./types";
 
 export default function Home() {
   const appRouter = useAppRouter();

@@ -25,8 +25,12 @@ export default function TheDogPagePage() {
         console.log("API response:", data); // Log the full API response
         // The Zoo Animal API returns an array of animal objects
         setAnimals(Array.isArray(data) ? data : []);
-      } catch (err: any) {
-        setError(err.message || "Unknown error");
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message || "Unknown error");
+        } else {
+          setError("Unknown error");
+        }
       } finally {
         setLoading(false);
       }
