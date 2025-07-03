@@ -7,6 +7,7 @@ export default function Home() {
   const appRouter = useAppRouter();
 
   useEffect(() => {
+    //test push
     if (typeof window !== "undefined") {
       const loginUser = localStorage.getItem("login_user");
       if (loginUser) {
