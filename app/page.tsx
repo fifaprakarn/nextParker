@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAppRouter } from "./router";
+import type { RegisUser } from "./types";
 
 export default function Home() {
   const appRouter = useAppRouter();
@@ -9,9 +10,8 @@ export default function Home() {
   useEffect(() => {
     //test push
     if (typeof window !== "undefined") {
-      const loginUser = localStorage.getItem("login_user");
+      const loginUser: string | null = localStorage.getItem("login_user");
       if (loginUser) {
-        // window.location.href = "/animal_list";
         appRouter.goToAnimalList();
       } 
       else {

@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useAppRouter } from "../router";
+import type { RegisUser } from "../types";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -20,8 +21,8 @@ export default function LoginPage() {
       const regisUserListStr = localStorage.getItem("regis_user_list");
       console.log("regis_user_list from localStorage:", regisUserListStr); // Log the registration data
       if (regisUserListStr) {
-        const regisUserList = JSON.parse(regisUserListStr);
-        const foundUser = regisUserList.find((u: any) => u.email === username && u.password === password);
+        const regisUserList: RegisUser[] = JSON.parse(regisUserListStr);
+        const foundUser = regisUserList.find((u) => u.email === username && u.password === password);
         if (!foundUser) {
           setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
           return;

@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAppRouter } from "../router";
+import type { Breed } from "../types";
 
 // Example: Use the Zoo Animal API which provides images and content
 const ANIMAL_API_URL = "https://api.thedogapi.com/v1/breeds";
 
 export default function TheDogPagePage() {
-  const [animals, setAnimals] = useState<any[]>([]);
+  const [animals, setAnimals] = useState<Breed[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -77,10 +78,10 @@ export default function TheDogPagePage() {
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <ul className="w-full flex flex-col gap-4">
           {animals
-            .filter((animal: any) =>
+            .filter((animal) =>
               animal.name?.toLowerCase().includes(search.toLowerCase())
             )
-            .map((animal: any, idx: number) => (
+            .map((animal, idx) => (
               <li key={animal.id || idx} className="border-b pb-4 flex gap-4 items-center">
                 <img
                   src={animal.reference_image_id ? `https://cdn2.thedogapi.com/images/${animal.reference_image_id}.jpg` : "/login_icon.svg"}

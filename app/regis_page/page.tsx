@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useAppRouter } from "../router";
+import type { RegisUser } from "../types";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -9,7 +10,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const [regisUserData, setRegisUserData] = useState<any[]>([]);
+  const [regisUserData, setRegisUserData] = useState<RegisUser[]>([]);
   const router = useAppRouter();
 
   useEffect(() => {
@@ -40,12 +41,12 @@ export default function RegisterPage() {
     }
     if (typeof window !== "undefined") {
       const regisUserStr = localStorage.getItem("regis_user_list");
-      let regisUserList = regisUserStr ? JSON.parse(regisUserStr) : [];
-      if (regisUserList.some((u: any) => u.username === username)) {
+      const regisUserList: RegisUser[] = regisUserStr ? JSON.parse(regisUserStr) : [];
+      if (regisUserList.some((u: RegisUser) => u.username === username)) {
         setError("ชื่อผู้ใช้นี้ถูกใช้ไปแล้ว");
         return;
       }
-      if (regisUserList.some((u: any) => u.email === email)) {
+      if (regisUserList.some((u: RegisUser) => u.email === email)) {
         setError("อีเมลนี้ถูกใช้ไปแล้ว");
         return;
       }
