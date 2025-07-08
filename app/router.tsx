@@ -21,5 +21,6 @@ export function useAppRouter() {
     goBack: () => router.back(),
     push: (path: string) => router.push(path),
     replace: (path: string) => router.replace(path),
+    goToMainPage: () => router.push("/main_page"),
   };
 }
