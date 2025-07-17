@@ -65,8 +65,7 @@ export default function TheDogPagePage() {
                 onClick={() => {
                   localStorage.removeItem("login_user");
                   setLoginUser(null);
-                  window.location.reload();
-                  router.goToHome();
+                  router.goToHome(); // ลบ window.location.reload();
                 }}
               >
                 ออกจากระบบ
