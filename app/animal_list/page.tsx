@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAppRouter } from "../router";
 import type { Breed } from "../types";
+import axios from "axios";
 
 // Example: Use the Zoo Animal API which provides images and content
 const ANIMAL_API_URL = "https://api.thedogapi.com/v1/breeds";
@@ -17,26 +18,31 @@ export default function TheDogPagePage() {
   const router = useAppRouter();
 
   useEffect(() => {
-    async function fetchTheDogs() {
+    const fetchTheDogs = async () => {
       setLoading(true);
       setError("");
       try {
-        const response = await fetch(ANIMAL_API_URL);
-        if (!response.ok) throw new Error("Failed to fetch animal list");
-        const data = await response.json();
-        console.log("API response:", data); // Log the full API response
-        // The Zoo Animal API returns an array of animal objects
+        const { data } = await axios.get<Breed[]>(ANIMAL_API_URL);
         setAnimals(Array.isArray(data) ? data : []);
+        console.log("API response:", data);
       } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message || "Unknown error");
+        // จัดการ error ของ axios แบบปลอดภัย (TypeScript)
+        if (err && typeof err === "object" && err !== null) {
+          const errorObj = err as { message?: string; response?: { status: number; statusText: string } };
+          if (errorObj.response) {
+            setError(`API Error: ${errorObj.response.status} ${errorObj.response.statusText}`);
+          } else if (errorObj.message) {
+            setError(errorObj.message);
+          } else {
+            setError("Unknown error");
+          }
         } else {
           setError("Unknown error");
         }
       } finally {
         setLoading(false);
       }
-    }
+    };
     fetchTheDogs();
   }, []);
 
@@ -151,4 +157,3 @@ export default function TheDogPagePage() {
     </div>
   );
 }
-
