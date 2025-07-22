@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useAppRouter } from "../router";
 import type { Breed } from "../types";
 import axios from "axios";
+import { useCallback } from "react";
 
 // Example: Use the Zoo Animal API which provides images and content
 const ANIMAL_API_URL = "https://api.thedogapi.com/v1/breeds";
@@ -17,17 +18,16 @@ export default function TheDogPagePage() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const router = useAppRouter();
 
-  useEffect(() => {
-    const fetchTheDogs = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const { data } = await axios.get<Breed[]>(ANIMAL_API_URL);
-        setAnimals(Array.isArray(data) ? data : []);
-        console.log("API response:", data);
-      } catch (err) {
-        // จัดการ error ของ axios แบบปลอดภัย (TypeScript)
-        if (err && typeof err === "object" && err !== null) {
+  const fetchTheDogs = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const { data } = await axios.get<Breed[]>(ANIMAL_API_URL);
+      setAnimals(Array.isArray(data) ? data : []);
+      console.log("API response:", data);
+    } catch (err) {
+      // ...handle error...
+         if (err && typeof err === "object" && err !== null) {
           const errorObj = err as { message?: string; response?: { status: number; statusText: string } };
           if (errorObj.response) {
             setError(`API Error: ${errorObj.response.status} ${errorObj.response.statusText}`);
@@ -39,12 +39,43 @@ export default function TheDogPagePage() {
         } else {
           setError("Unknown error");
         }
-      } finally {
-        setLoading(false);
-      }
-    };
+    } finally {
+      setLoading(false);
+    }
+  }, []); // [] หมายถึงจะไม่สร้างใหม่จนกว่าจะ unmount
+
+  // useEffect(() => {
+  //   const fetchTheDogs = async () => {
+  //     setLoading(true);
+  //     setError("");
+  //     try {
+  //       const { data } = await axios.get<Breed[]>(ANIMAL_API_URL);
+  //       setAnimals(Array.isArray(data) ? data : []);
+  //       console.log("API response:", data);
+  //     } catch (err) {
+  //       // จัดการ error ของ axios แบบปลอดภัย (TypeScript)
+  //       if (err && typeof err === "object" && err !== null) {
+  //         const errorObj = err as { message?: string; response?: { status: number; statusText: string } };
+  //         if (errorObj.response) {
+  //           setError(`API Error: ${errorObj.response.status} ${errorObj.response.statusText}`);
+  //         } else if (errorObj.message) {
+  //           setError(errorObj.message);
+  //         } else {
+  //           setError("Unknown error");
+  //         }
+  //       } else {
+  //         setError("Unknown error");
+  //       }
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchTheDogs();
+  // }, []);
+
+  useEffect(() => {
     fetchTheDogs();
-  }, []);
+  }, [fetchTheDogs]);
 
   // Add favVersion as a dependency to re-render when favorite changes
   useEffect(() => {
