@@ -1,23 +1,11 @@
-"use client";
-
-import { useEffect } from "react";
-import { useAppRouter } from "./router";
+import { Suspense } from "react";
+import HomeContent from "./HomeContent";
 
 export default function Home() {
-  const appRouter = useAppRouter();
 
-  useEffect(() => {
-    //test push
-    if (typeof window !== "undefined") {
-      const loginUser: string | null = localStorage.getItem("login_user");
-      if (loginUser) {
-        appRouter.goToAnimalList();
-      } 
-      else {
-        appRouter.goToLogin();
-      }
-    }
-  }, []);
-
-  // return <LoginPage />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
+  );
 }
