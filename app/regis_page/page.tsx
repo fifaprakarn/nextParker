@@ -1,24 +1,24 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useAppRouter } from "../router";
+import { useRegisterStore } from "../utils/registerStore";
 import type { RegisUser } from "../types";
 
 export default function RegisterPage() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [regisUserData, setRegisUserData] = useState<RegisUser[]>([]);
+  const {
+    username, setUsername,
+    email, setEmail,
+    password, setPassword,
+    confirmPassword, setConfirmPassword,
+    error, setError,
+    regisUserData, setRegisUserData
+  } = useRegisterStore();
   const router = useAppRouter();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const regisUserStr = localStorage.getItem("regis_user_list");
-      // let regisUserList = regisUserStr ? JSON.parse(regisUserStr) : [];
-      // regisUserList = regisUserList.filter((u: { username: string; }) => u.username !== "fifaa");
-      // localStorage.setItem("regis_user_list", JSON.stringify(regisUserList));
       if (regisUserStr) {
         setRegisUserData(JSON.parse(regisUserStr));
         console.log("regis_user_list from localStorage (on page load):", regisUserStr);
@@ -27,7 +27,7 @@ export default function RegisterPage() {
         console.log("regis_user_list from localStorage (on page load): ไม่มีข้อมูล");
       }
     }
-  }, []);
+  }, [setRegisUserData]);
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
