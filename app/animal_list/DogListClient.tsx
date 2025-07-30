@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { useAppRouter } from "../router";
 import type { Breed } from "../types";
+import { useRegisterStore } from "../utils/registerStore";
+import { text } from "../locales/text";
 
 export default function DogListClient({ dogs, isLoading }: { dogs: Breed[]; isLoading?: boolean }) {
   const [animals, setAnimals] = useState<Breed[]>(dogs);
@@ -9,7 +11,10 @@ export default function DogListClient({ dogs, isLoading }: { dogs: Breed[]; isLo
   const [loginUser, setLoginUser] = useState<string | null>(null);
   const [favVersion, setFavVersion] = useState(0);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const router = useAppRouter();
+  const language = useRegisterStore((s) => s.language);
+  const t = text[language].dog;
 
   // Update animals if dogs prop changes (SSR hydration)
   useEffect(() => {
@@ -39,12 +44,12 @@ export default function DogListClient({ dogs, isLoading }: { dogs: Breed[]; isLo
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#f6e7c1] px-2 py-8">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-8 sm:p-12 flex flex-col items-center">
         <h2 className="text-2xl font-extrabold mb-6 text-orange-500 text-center tracking-tight">
-          The Dog List
+          {t.title}
         </h2>
         <div className="mb-4 w-full text-right flex items-center justify-end gap-2">
           {loginUser && (
             <>
-              <span className="text-orange-500 font-semibold">สวัสดี, {loginUser}</span>
+              <span className="text-orange-500 font-semibold">{t.hello}, {loginUser}</span>
               <button
                 className="ml-4 px-3 py-1 rounded bg-orange-100 text-orange-600 border border-orange-300 hover:bg-orange-200 text-sm font-medium"
                 onClick={() => {
@@ -53,14 +58,14 @@ export default function DogListClient({ dogs, isLoading }: { dogs: Breed[]; isLo
                   router.goToHome();
                 }}
               >
-                ออกจากระบบ
+                {t.logout}
               </button>
             </>
           )}
         </div>
         <input
           type="text"
-          placeholder="Search dog name..."
+          placeholder={t.search}
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="mb-6 w-full max-w-md border-b border-orange-300 focus:border-orange-500 outline-none px-2 py-2 text-lg"
@@ -70,16 +75,35 @@ export default function DogListClient({ dogs, isLoading }: { dogs: Breed[]; isLo
             className={`flex-1 py-2 rounded-l-lg text-lg font-semibold border border-orange-400 ${!showFavoritesOnly ? 'bg-orange-400 text-white' : 'bg-white text-orange-500'}`}
             onClick={() => setShowFavoritesOnly(false)}
           >
-            รายการสุนัขทั้งหมด
+            {t.all}
           </button>
           <button
             className={`flex-1 py-2 rounded-r-lg text-lg font-semibold border border-orange-400 border-l-0 ${showFavoritesOnly ? 'bg-orange-400 text-white' : 'bg-white text-orange-500'}`}
             onClick={() => setShowFavoritesOnly(true)}
           >
-            เฉพาะรายการโปรด
+            {t.fav}
           </button>
         </div>
-        {isLoading && <div>Loading...</div>}
+        {isLoading && <div>{t.loading}</div>}
+        <button
+          className="mb-4 px-4 py-2 rounded bg-orange-500 text-white font-semibold hover:bg-orange-600 transition"
+          onClick={() => setOpenDialog(true)}
+        >
+          Open Dialog
+        </button>
+        {openDialog && (
+          <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full flex flex-col items-center">
+              <div className="text-lg font-bold mb-4">Dialog Content</div>
+              <button
+                className="mt-2 px-4 py-2 rounded bg-orange-400 text-white font-semibold hover:bg-orange-500"
+                onClick={() => setOpenDialog(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
         <ul className="w-full flex flex-col gap-4">
           {filteredAnimals.map((animal, idx) => {
             const favKey = loginUser ? `favorite_dogs_${loginUser}` : '';

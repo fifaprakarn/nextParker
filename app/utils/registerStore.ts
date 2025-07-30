@@ -14,6 +14,8 @@ interface RegisterState {
   setError: (v: string) => void;
   regisUserData: RegisUser[];
   setRegisUserData: (v: RegisUser[]) => void;
+  language: "th" | "en";
+  setLanguage: (lang: "th" | "en") => void;
 }
 
 export const useRegisterStore = create<RegisterState>((set) => ({
@@ -29,4 +31,6 @@ export const useRegisterStore = create<RegisterState>((set) => ({
   setError: (v) => set({ error: v }),
   regisUserData: [],
   setRegisUserData: (v) => set({ regisUserData: v }),
+  language: "th",
+  setLanguage: (lang) => set({ language: lang }),
 }));

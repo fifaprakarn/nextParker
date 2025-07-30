@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { useAppRouter } from "../router";
 import { useRegisterStore } from "../utils/registerStore";
+import { text } from "../locales/text";
 import type { RegisUser } from "../types";
 
 export default function RegisterPage() {
@@ -12,9 +13,11 @@ export default function RegisterPage() {
     password, setPassword,
     confirmPassword, setConfirmPassword,
     error, setError,
-    regisUserData, setRegisUserData
+    regisUserData, setRegisUserData,
   } = useRegisterStore();
   const router = useAppRouter();
+  const language = useRegisterStore((s) => s.language);
+  const t = text[language].regis;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -32,22 +35,22 @@ export default function RegisterPage() {
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !email || !password || !confirmPassword) {
-      setError("กรุณากรอกข้อมูลให้ครบถ้วน");
+      setError(t.fillAll);
       return;
     }
     if (password !== confirmPassword) {
-      setError("รหัสผ่านไม่ตรงกัน");
+      setError(t.passwordMismatch);
       return;
     }
     if (typeof window !== "undefined") {
       const regisUserStr = localStorage.getItem("regis_user_list");
-      const regisUserList: RegisUser[] = regisUserStr ? JSON.parse(regisUserStr) : [];
+      const regisUserList = regisUserStr ? JSON.parse(regisUserStr) : [];
       if (regisUserList.some((u: RegisUser) => u.username === username)) {
-        setError("ชื่อผู้ใช้นี้ถูกใช้ไปแล้ว");
+        setError(t.usernameUsed);
         return;
       }
       if (regisUserList.some((u: RegisUser) => u.email === email)) {
-        setError("อีเมลนี้ถูกใช้ไปแล้ว");
+        setError(t.emailUsed);
         return;
       }
       regisUserList.push({ username, email, password });
@@ -69,39 +72,42 @@ export default function RegisterPage() {
           height={120}
           className="mb-8"
         />
+        <div className="flex w-full justify-end mb-2">
+          {/* Remove local language switcher UI, now global */}
+        </div>
         <h2 className="text-2xl font-extrabold mb-6 text-orange-500 text-center tracking-tight">
-          สมัครสมาชิก
+          {t.register}
         </h2>
         <div className="mb-4 w-full">
-          <h3 className="text-md font-semibold text-gray-700 mb-1">regis_user_list (localStorage):</h3>
-          <pre className="bg-gray-100 rounded p-2 text-xs text-gray-700 overflow-x-auto">{regisUserData.length > 0 ? JSON.stringify(regisUserData, null, 2) : "ไม่มีข้อมูล"}</pre>
+          <h3 className="text-md font-semibold text-gray-700 mb-1">{t.regisList}</h3>
+          <pre className="bg-gray-100 rounded p-2 text-xs text-gray-700 overflow-x-auto">{regisUserData.length > 0 ? JSON.stringify(regisUserData, null, 2) : t.noData}</pre>
         </div>
         <form className="w-full flex flex-col gap-6" onSubmit={handleRegister}>
           <input
             className="border-0 border-b border-gray-300 focus:border-orange-400 focus:ring-0 bg-transparent placeholder-gray-400 text-lg w-full outline-none"
             type="text"
-            placeholder="ชื่อผู้ใช้"
+            placeholder={t.username}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
           <input
             className="border-0 border-b border-gray-300 focus:border-orange-400 focus:ring-0 bg-transparent placeholder-gray-400 text-lg w-full outline-none"
             type="email"
-            placeholder="อีเมล"
+            placeholder={t.email}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
             className="border-0 border-b border-gray-300 focus:border-orange-400 focus:ring-0 bg-transparent placeholder-gray-400 text-lg w-full outline-none"
             type="password"
-            placeholder="รหัสผ่าน"
+            placeholder={t.password}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <input
             className="border-0 border-b border-gray-300 focus:border-orange-400 focus:ring-0 bg-transparent placeholder-gray-400 text-lg w-full outline-none"
             type="password"
-            placeholder="ยืนยันรหัสผ่าน"
+            placeholder={t.confirmPassword}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
@@ -112,14 +118,14 @@ export default function RegisterPage() {
             type="submit"
             className="w-full py-3 rounded-full text-white text-lg font-semibold bg-gradient-to-r from-orange-400 to-orange-500 shadow-md hover:from-orange-500 hover:to-orange-400"
           >
-            สมัครสมาชิก
+            {t.submit}
           </button>
           <button
             type="button"
             className="w-full py-3 rounded-full text-orange-500 text-lg font-semibold border border-orange-400 hover:bg-orange-50 transition"
             onClick={() => router.goToHome()}
           >
-            กลับไปหน้าเข้าสู่ระบบ
+            {t.back}
           </button>
         </form>
       </div>
