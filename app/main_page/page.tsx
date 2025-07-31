@@ -1,13 +1,11 @@
+
 import React from "react";
 import { useRegisterStore } from "../utils/registerStore";
+import { text } from "../locales/text";
 
 export default function MainPage() {
   const language = useRegisterStore((s) => s.language);
-  const langDict = {
-    th: { welcome: "สวัสดี นี่คือหน้าหลัก!" },
-    en: { welcome: "Hello, this is the main page!" }
-  };
-  const t = langDict[language] || langDict.th;
+  const t = text[language]?.main || text.th.main;
 
   return (
     <div>
